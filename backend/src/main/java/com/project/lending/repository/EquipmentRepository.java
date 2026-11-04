@@ -17,11 +17,11 @@ public class EquipmentRepository {
     private final JdbcTemplate jdbcTemplate;
 
     private final RowMapper<Equipment> rowMapper = (resultSet, rowNum) -> new Equipment(
-            result.getLong("id"),
-            result.getString("name"),
-            EquipmentType.valueOf(result.getString("type")),
-            EquipmentStatus.valueOf(result.getString("status")),
-            result.getObject("created_at", OffsetDateTime.class));
+            resultSet.getLong("id"),
+            resultSet.getString("name"),
+            EquipmentType.valueOf(resultSet.getString("type")),
+            EquipmentStatus.valueOf(resultSet.getString("status")),
+            resultSet.getObject("created_at", OffsetDateTime.class));
 
     public EquipmentRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
