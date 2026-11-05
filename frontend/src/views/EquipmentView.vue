@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import * as equipmentApi from '@/api/equipment'
 import { STATUS_LABELS, TYPE_LABELS } from '@/constants/equipment'
 
@@ -14,10 +14,13 @@ const borrowingEquipment = ref(null)
 const borrowerName = ref('')
 const borrowError = ref('')
 
+const type = ref(null)
+const status = ref(null)
+
 async function load() {
   errorMessage.value = ''
   try {
-    equipmentList.value = await equipmentApi.list()
+    equipmentList.value = await equipmentApi.list({ type: type.value, status: status.value })
   } catch (error) {
     errorMessage.value = error.message
   }
@@ -91,6 +94,7 @@ async function returnEquipment(equipment) {
   }
 }
 
+watch([type, status], load)
 
 onMounted(load)
 </script>
@@ -99,6 +103,27 @@ onMounted(load)
   <div class="toolbar">
     <p>設備列表</p>
     <button @click="openForm(null)">新增設備</button>
+  </div>
+
+  <div class="filters">
+    <label>
+      類型
+      <select v-model="type">
+        <option :value="null">全部</option>
+        <option v-for="(label, value) in TYPE_LABELS" :key="value" :value="value">
+          {{ label }}
+        </option>
+      </select>
+    </label>
+    <label>
+      狀態
+      <select v-model="status">
+        <option :value="null">全部</option>
+        <option v-for="(label, value) in STATUS_LABELS" :key="value" :value="value">
+          {{ label }}
+        </option>
+      </select>
+    </label>
   </div>
 
   <form v-if="showForm" class="form-panel" @submit.prevent="submit">
@@ -135,7 +160,6 @@ onMounted(load)
     </div>
   </form>
 
-
   <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
   <table>
@@ -153,7 +177,9 @@ onMounted(load)
         <td>{{ TYPE_LABELS[equipment.type] }}</td>
         <td>{{ STATUS_LABELS[equipment.status] }}</td>
         <td>
-          <button v-if="equipment.status === 'AVAILABLE'" @click="openBorrow(equipment)">借用</button>
+          <button v-if="equipment.status === 'AVAILABLE'" @click="openBorrow(equipment)">
+            借用
+          </button>
           <button v-else @click="returnEquipment(equipment)">歸還</button>
           <button @click="openForm(equipment)">編輯</button>
           <button @click="remove(equipment)">刪除</button>
