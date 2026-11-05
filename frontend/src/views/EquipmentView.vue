@@ -14,8 +14,8 @@ async function load() {
   errorMessage.value = ''
   try {
     equipmentList.value = await equipmentApi.list()
-  } catch {
-    errorMessage.value = '無法載入設備列表'
+  } catch(error) {
+    errorMessage.value = error.message
   }
 }
 
@@ -37,8 +37,8 @@ async function submit() {
     }
     showForm.value = false
     await load()
-  } catch {
-    formError.value = '儲存失敗'
+  } catch(error) {
+    formError.value = error.message
   }
 }
 
@@ -50,8 +50,8 @@ async function remove(equipment) {
   try {
     await equipmentApi.remove(equipment.id)
     await load()
-  } catch {
-    errorMessage.value = '刪除失敗'
+  } catch(error) {
+    errorMessage.value = error.message
   }
 }
 
