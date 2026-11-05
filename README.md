@@ -34,3 +34,6 @@
 | POST | `/api/equipment` | 新增設備 | `{ name, type }` | 201 |
 | PUT | `/api/equipment/{id}` | 修改設備 | `{ name, type }` | 204 |
 | DELETE | `/api/equipment/{id}` | 刪除設備 | | 204 |
+| POST | `/api/equipment/{id}/borrow` | 新增借用紀錄 | `{ borrowerName }` | 204 |
+| POST | `/api/equipment/{id}/return` | 歸還設備 | | 204 |
+| GET | `/api/loans` | 借用歷史 | query `equipmentId` 可省略 | 200，陣列 |
