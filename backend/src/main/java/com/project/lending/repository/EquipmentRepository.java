@@ -34,4 +34,17 @@ public class EquipmentRepository {
                 type == null ? null : type.name(),
                 status == null ? null : status.name());
     }
+
+    public void create(String name, EquipmentType type) {
+        jdbcTemplate.update("CALL sp_create_equipment(?, ?)", name, type.name());
+    }
+
+    public void update(long id, String name, EquipmentType type) {
+        jdbcTemplate.update("CALL sp_update_equipment(?, ?, ?)", id, name, type.name());
+    }
+
+    public void delete(long id) {
+        jdbcTemplate.update("CALL sp_delete_equipment(?)", id);
+    }
 }
+

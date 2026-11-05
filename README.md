@@ -31,3 +31,6 @@
 | Method | 路徑 | 用途 | 輸入 | 回應 |
 |---|---|---|---|---|
 | GET | `/api/equipment` | 設備列表 | query `type`、`status` 可省略 | 200，陣列 |
+| POST | `/api/equipment` | 新增設備 | `{ name, type }` | 201 |
+| PUT | `/api/equipment/{id}` | 修改設備 | `{ name, type }` | 204 |
+| DELETE | `/api/equipment/{id}` | 刪除設備 | | 204 |
