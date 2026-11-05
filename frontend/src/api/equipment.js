@@ -23,3 +23,7 @@ export function borrow(id, borrowerName) {
 export function returnEquipment(id) {
   return http.post(`/equipment/${id}/return`)
 }
+
+export function listLoans(params) {
+  return http.get('/loans', { params }).then((response) => response.data)
+}
