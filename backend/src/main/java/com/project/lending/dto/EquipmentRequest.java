@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 public record EquipmentRequest(
     @NotBlank(message = "請輸入設備名稱")
     @Size(max = 100, message = "設備名稱不可超過 100 字")
+    @Pattern(regexp = "[^<>]*", message = "設備名稱不可包含 < 或 >")
     String name,
 
     @NotNull(message = "請選擇設備類型")
