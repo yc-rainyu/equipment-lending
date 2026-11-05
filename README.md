@@ -3,6 +3,7 @@
 ## 資料庫設計
 
 `equipment` 存設備，`loan_record` 存每次借用
+
 一台設備可被借很多次，一對多，`loan_record.equipment_id` 指向 `equipment.id`
 
 ### equipment
@@ -24,3 +25,9 @@
 | borrower_name | VARCHAR(50) | 借用人 |
 | borrowed_at | TIMESTAMPTZ | 借出時間 |
 | returned_at | TIMESTAMPTZ | 歸還時間，還沒還是 NULL |
+
+## API
+
+| Method | 路徑 | 用途 | 輸入 | 回應 |
+|---|---|---|---|---|
+| GET | `/api/equipment` | 設備列表 | query `type`、`status` 可省略 | 200，陣列 |
