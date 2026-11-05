@@ -14,7 +14,7 @@ async function load() {
   errorMessage.value = ''
   try {
     equipmentList.value = await equipmentApi.list()
-  } catch(error) {
+  } catch (error) {
     errorMessage.value = error.message
   }
 }
@@ -37,7 +37,7 @@ async function submit() {
     }
     showForm.value = false
     await load()
-  } catch(error) {
+  } catch (error) {
     formError.value = error.message
   }
 }
@@ -50,7 +50,7 @@ async function remove(equipment) {
   try {
     await equipmentApi.remove(equipment.id)
     await load()
-  } catch(error) {
+  } catch (error) {
     errorMessage.value = error.message
   }
 }
