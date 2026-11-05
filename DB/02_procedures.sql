@@ -82,3 +82,24 @@ BEGIN
     UPDATE loan_record SET returned_at = now() WHERE equipment_id = p_equipment_id AND returned_at IS NULL;
 END;
 $$;
+
+CREATE OR REPLACE FUNCTION fn_list_loan_records(p_equipment_id BIGINT)
+RETURNS TABLE (
+    id BIGINT,
+    equipment_id BIGINT,
+    equipment_name VARCHAR,
+    borrower_name VARCHAR,
+    borrowed_at TIMESTAMPTZ,
+    returned_at TIMESTAMPTZ
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT r.id, r.equipment_id, e.name, r.borrower_name, r.borrowed_at, r.returned_at
+    FROM loan_record r
+    JOIN equipment e ON e.id = r.equipment_id
+    WHERE p_equipment_id IS NULL OR r.equipment_id = p_equipment_id
+    ORDER BY r.borrowed_at DESC, r.id DESC;
+END;
+$$;
