@@ -10,6 +10,10 @@ const editId = ref(null)
 const form = reactive({ name: '', type: 'NOTEBOOK' })
 const formError = ref('')
 
+const borrowingEquipment = ref(null)
+const borrowerName = ref('')
+const borrowError = ref('')
+
 async function load() {
   errorMessage.value = ''
   try {
@@ -20,6 +24,7 @@ async function load() {
 }
 
 function openForm(equipment) {
+  borrowingEquipment.value = null
   editId.value = equipment?.id ?? null
   form.name = equipment?.name ?? ''
   form.type = equipment?.type ?? 'NOTEBOOK'
@@ -55,6 +60,38 @@ async function remove(equipment) {
   }
 }
 
+function openBorrow(equipment) {
+  showForm.value = false
+  borrowingEquipment.value = equipment
+  borrowerName.value = ''
+  borrowError.value = ''
+}
+
+async function borrow() {
+  borrowError.value = ''
+  try {
+    await equipmentApi.borrow(borrowingEquipment.value.id, borrowerName.value)
+    borrowingEquipment.value = null
+    await load()
+  } catch (error) {
+    borrowError.value = error.message
+  }
+}
+
+async function returnEquipment(equipment) {
+  if (!window.confirm(`確定要歸還「${equipment.name}」嗎？`)) {
+    return
+  }
+  errorMessage.value = ''
+  try {
+    await equipmentApi.returnEquipment(equipment.id)
+    await load()
+  } catch (error) {
+    errorMessage.value = error.message
+  }
+}
+
+
 onMounted(load)
 </script>
 
@@ -64,7 +101,7 @@ onMounted(load)
     <button @click="openForm(null)">新增設備</button>
   </div>
 
-  <form v-if="showForm" class="equipment-form" @submit.prevent="submit">
+  <form v-if="showForm" class="form-panel" @submit.prevent="submit">
     <p>{{ editId ? '編輯設備' : '新增設備' }}</p>
     <label>
       名稱
@@ -85,6 +122,20 @@ onMounted(load)
     </div>
   </form>
 
+  <form v-if="borrowingEquipment" class="form-panel" @submit.prevent="borrow">
+    <p>借用「{{ borrowingEquipment.name }}」</p>
+    <label>
+      借用人
+      <input v-model="borrowerName" />
+    </label>
+    <p v-if="borrowError" class="error">{{ borrowError }}</p>
+    <div>
+      <button type="submit">確定借用</button>
+      <button type="button" @click="borrowingEquipment = null">取消</button>
+    </div>
+  </form>
+
+
   <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
   <table>
@@ -102,6 +153,8 @@ onMounted(load)
         <td>{{ TYPE_LABELS[equipment.type] }}</td>
         <td>{{ STATUS_LABELS[equipment.status] }}</td>
         <td>
+          <button v-if="equipment.status === 'AVAILABLE'" @click="openBorrow(equipment)">借用</button>
+          <button v-else @click="returnEquipment(equipment)">歸還</button>
           <button @click="openForm(equipment)">編輯</button>
           <button @click="remove(equipment)">刪除</button>
         </td>

@@ -15,3 +15,11 @@ export function update(id, equipment) {
 export function remove(id) {
   return http.delete(`/equipment/${id}`)
 }
+
+export function borrow(id, borrowerName) {
+  return http.post(`/equipment/${id}/borrow`, { borrowerName })
+}
+
+export function returnEquipment(id) {
+  return http.post(`/equipment/${id}/return`)
+}
